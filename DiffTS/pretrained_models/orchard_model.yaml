@@ -1,0 +1,31 @@
+experiment:
+  id: ts_orch_newdata
+data:
+  data_dir: Datasets/BRANCH3D
+  dataloader: OrchardDataset
+  varieties: ['Apple']
+  max_range: 200.0
+  num_nodes: auto
+  num_points: 100000 # "auto"
+  cond_resolution: 0.001
+  node_resolution: 0.005
+  scan_prune_dist: 0
+  node_count_vox_size: 0.06
+  multiply_data: 50
+  scan_farthps: false
+  node_fps: true
+  debug_vis: false
+diff:
+  beta_start: 2.0e-06
+  beta_end: 2.0e-04
+  s_steps: 999
+
+train:
+  batch_size: 4
+  decay_lr: 0.0
+  lr_decay_epochs: 75
+  lr: 0.0001
+  uncond_w: 1.5
+  input_feats: "colors"
+  use_colors: true
+  qsample_inference: true

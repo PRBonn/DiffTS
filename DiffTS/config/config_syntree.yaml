@@ -1,0 +1,36 @@
+experiment:
+  id: ts_syntree
+data:
+  data_dir: /lustre/mlnvme/data/emarks1_hpc-data_fast/synthetic-trees_apples/foliage
+  dataloader: SyntheticTrees
+  varieties: ['Apple']
+  max_range: 200.0
+  num_nodes: auto
+  num_points: 100000 # "auto"
+  cond_resolution: 0.01
+  node_resolution: 0.01
+  scan_prune_dist: 0
+  prune_length: 0.4
+  prune_min_radius: 0.0
+  node_count_vox_size: 0.12
+  multiply_data: 50
+  scan_farthps: false
+  debug_vis: false
+diff:
+  beta_start: 2.0e-05
+  beta_end: 0.0002
+
+train:
+  batch_size: 1
+  decay_lr: 0.0001
+  lr_decay_epochs: 75 #600
+  lr: 0.0001
+  uncond_w: 2.0
+  input_feats: "semantics"
+  use_colors: false
+  use_semantics: true
+  qsample_inference: true
+  n_gpus: 1
+  num_workers: 0
+  rel_neighbs: offset
+

@@ -1,0 +1,26 @@
+services:
+  diffts:
+    build:
+      context: .
+      ssh: ["default"]
+    runtime: nvidia
+    shm_size: '128gb'
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    image: "diffts"
+    volumes:
+      # Always mount these
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/docker_logs:/var/log
+      # Local mounts
+      - .:/packages/DiffTS
+      - ./logs:/logs
+      # Datasets path
+      # - PATH_TO_FOLDER_CONTAINING_DATASETS:/data
+    environment:
+      - DISPLAY
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [compute,utility,graphics]

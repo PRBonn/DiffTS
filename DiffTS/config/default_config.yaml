@@ -1,0 +1,59 @@
+data:
+  dataset_norm: false
+  max_range: 200.0
+  num_nodes: 3000
+  num_points: 100000 # "auto"
+  preload: false
+  prune_length: 0.0
+  prune_min_radius: 0.0
+  cond_resolution: 0.001
+  node_resolution: 0.005
+  std_axis_norm: false
+  scan_prune_dist: 0
+  node_count_vox_size: 0.12
+  debug_vis: false
+  multiply_data: 50
+  scan_farthps: false
+  node_fps: false
+  overfit: false
+  remove_leaves: false
+  lidar_sim: false
+  vis_output: false
+  pp_max_bridge_dist: 0.2
+  connected_components_filt: false
+  test_w_uncond: false
+diff:
+  beta_end: 2.0e-04
+  beta_func: linear
+  beta_start: 2.0e-06
+  reg_weight: 5.0
+  s_steps: 200
+  t_steps: 1000
+model:
+  out_dim: 96
+  downscale_params: 1
+  semantic_encoder: false
+  debug: false
+  overfit: false
+  unet_encoder: false
+  legacy_model: false
+  multiscale_cond: false
+
+train:
+  batch_size: 4
+  decay_lr: 0.0
+  lr_decay_epochs: 75
+  lr: 0.0001
+  max_epoch: 10000
+  n_gpus: -1
+  neighb_fusion: wMean
+  num_workers: 20
+  rel_neighbs: normed_dir
+  snr_weighting: false
+  uncond_prob: 0.1
+  uncond_w: 2.0
+  input_feats: "colors"
+  use_semantics: false
+  use_colors: true
+  cond_dist_limit: 0.0
+  qsample_inference: true

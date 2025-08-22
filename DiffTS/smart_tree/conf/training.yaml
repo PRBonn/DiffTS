@@ -1,0 +1,153 @@
+# @package: _global_
+
+wandb:
+  project: tree
+  entity: harry1576
+  mode: online 
+
+fp16: True
+num_epoch: 1
+lr_decay: True
+lr: 0.1
+early_stop_epoch: 20
+early_stop: True
+
+batch_size: 8
+directory: /local/smart-tree/data/branches
+json_path: smart_tree/conf/training-split.json
+voxel_size: 0.01
+
+cmap:
+  - [0.450, 0.325, 0.164] # Trunk
+  - [0.541, 0.670, 0.164] # Foliage
+
+
+capture_output: 1
+
+input_features:
+  - xyz
+
+target_features:
+  - radius
+  - direction
+  - class_l
+
+train_dataset:
+  _target_: smart_tree.dataset.dataset.TreeDataset
+  mode: train
+  voxel_size: ${voxel_size}
+  directory: ${directory}
+  json_path: ${json_path}
+  input_features: ${input_features}
+  target_features: ${target_features}
+  augmentation:
+    _target_:  smart_tree.dataset.augmentations.AugmentationPipeline 
+    augmentations:
+      - _target_:  smart_tree.dataset.augmentations.RandomCubicCrop
+        size: 4.0
+
+test_dataset:
+  _target_: smart_tree.dataset.dataset.TreeDataset
+  mode: test
+  voxel_size: ${voxel_size}
+  directory: ${directory}
+  json_path: ${json_path}
+  input_features: ${input_features}
+  target_features: ${target_features}
+  augmentation:
+    _target_:  smart_tree.dataset.augmentations.AugmentationPipeline 
+    augmentations:
+      - _target_:  smart_tree.dataset.augmentations.RandomCubicCrop
+        size: 4.0
+
+validation_dataset:
+  _target_: smart_tree.dataset.dataset.TreeDataset
+  mode: validation
+  voxel_size: ${voxel_size}
+  directory: ${directory}
+  json_path: ${json_path}
+  input_features: ${input_features}
+  target_features: ${target_features}
+  cache: True
+  augmentation:
+    _target_:  smart_tree.dataset.augmentations.AugmentationPipeline 
+    augmentations:
+      - _target_:  smart_tree.dataset.augmentations.RandomCubicCrop
+        size: 4.0
+
+
+train_data_loader:
+  _target_: torch.utils.data.DataLoader
+  batch_size: ${batch_size}
+  drop_last: False
+  pin_memory: False
+  num_workers: 0
+  shuffle: False
+  # sampler:
+  #   _target_: torch.utils.data.RandomSampler
+  #   replacement: True
+  #   num_samples: 8
+  #   data_source: ${train_dataset}
+  collate_fn:
+    _target_: smart_tree.model.sparse.batch_collate
+    _partial_: True
+  dataset: ${train_dataset}
+
+validation_data_loader:
+  _target_: torch.utils.data.DataLoader
+  batch_size: ${batch_size}
+  drop_last: False
+  pin_memory: False
+  num_workers: 0
+  shuffle: False
+  collate_fn:
+    _target_: smart_tree.model.sparse.batch_collate
+    _partial_: True
+  dataset: ${validation_dataset}
+
+test_data_loader:
+  _target_: torch.utils.data.DataLoader
+  batch_size: ${batch_size}
+  drop_last: False
+  pin_memory: False
+  num_workers: 0
+  shuffle: False
+  collate_fn:
+    _target_: smart_tree.model.sparse.batch_collate
+    _partial_: True
+  dataset: ${test_dataset}
+
+
+model:
+  _target_: smart_tree.model.model.Smart_Tree
+  input_channels: 3
+  unet_planes: [8, 16, 32]
+  radius_fc_planes: [8, 8, 4, 1]
+  direction_fc_planes: [8, 8, 4, 3]
+  class_fc_planes: [8, 8, 4, 2] 
+
+optimizer:
+  _target_: torch.optim.Adam 
+  lr: ${lr}
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  mode: "min"
+
+loss_fn:
+  _target_: smart_tree.model.loss.compute_loss
+  _partial_: True
+  vector_class: 0
+  target_radius_log: True
+ 
+  radius_loss_fn:
+    _target_ : smart_tree.model.loss.L1Loss
+    _partial_: True
+
+  direction_loss_fn:
+    _target_: smart_tree.model.loss.cosine_similarity_loss
+    _partial_: True
+
+  class_loss_fn:
+    _target_: smart_tree.model.loss.focal_loss
+    _partial_: True

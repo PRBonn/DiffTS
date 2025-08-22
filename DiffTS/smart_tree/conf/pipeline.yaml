@@ -1,0 +1,40 @@
+pipeline:
+  _target_: smart_tree.pipeline.Pipeline
+  
+  preprocessing:
+    _target_: smart_tree.dataset.augmentations.AugmentationPipeline
+    augmentations: 
+      - _target_:  smart_tree.dataset.augmentations.CentreCloud
+
+  model_inference: 
+    _target_: smart_tree.model.model_inference.ModelInference
+    model_path: smart_tree/model/weights/noble-elevator-58_model.pt
+    weights_path: smart_tree/model/weights/noble-elevator-58_model_weights.pt
+    voxel_size: 0.01
+    block_size: 4
+    buffer_size: 0.4
+    num_workers : 8
+    batch_size : 4
+
+  skeletonizer:
+    _target_: smart_tree.skeleton.skeletonize.Skeletonizer
+    K: 16
+    min_connection_length: 0.02 
+    minimum_graph_vertices: 32
+
+  view_model_output : False
+  view_skeletons : True
+  save_path: /
+  save_outputs : False
+  
+  branch_classes: [0]
+  cmap:
+    - [0.450, 0.325, 0.164] # Trunk
+    - [0.541, 0.670, 0.164] # Foliage
+
+  repair_skeletons : True
+  smooth_skeletons : True
+  smooth_kernel_size: 11 # Needs to be odd
+  prune_skeletons : True 
+  min_skeleton_radius : 0.01 
+  min_skeleton_length : 0.02

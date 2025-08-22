@@ -1,0 +1,7 @@
+# ignore all __pycache__ directories
+*__pycache__*
+*.egg-info*
+# ignore all model files
+*.ckpt
+DiffTS/experiments/*
+DiffTS/Datasets/*
