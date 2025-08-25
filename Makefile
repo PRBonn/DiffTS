@@ -9,13 +9,13 @@ GPUS ?= 0
 CONFIG ?= 'config_orchard.yaml'
 CHECKPOINT ?= 'None'
 WEIGHTS ?= 'None'
-RUN_IN_CONTAINER = docker --context $(MACHINE) compose run -e PLS_CHECKPOINT=$(CHECKPOINT) -e PLS_CONFIG=$(CONFIG) -e CUDA_VISIBLE_DEVICES=$(GPUS) diffts
+RUN_IN_CONTAINER = docker compose run -e PLS_CHECKPOINT=$(CHECKPOINT) -e PLS_CONFIG=$(CONFIG) -e CUDA_VISIBLE_DEVICES=$(GPUS) diffts
 FORMAT ?= 'lineset'
 FILTERING ?= 'true'
 PARAMS ?=
 
 build:
-	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=0 docker compose build diffts --ssh ssh-rsa --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID)
+	docker compose build diffts --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID)
 
 train:
 	$(RUN_IN_CONTAINER) python3 train.py --config $(CONFIG) --checkpoint $(CHECKPOINT) $(PARAMS)
